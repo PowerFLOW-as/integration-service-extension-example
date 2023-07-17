@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0zpqa53" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Zeebe Modeler" exporterVersion="0.11.0">
+  <bpmn:process id="integration-extension-example-rest-call-process" name="Call REST from process instance" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Integration Started">
+      <bpmn:outgoing>Flow_09ge9fv</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="EndEvent_1dyv22q" name="Integration Finished">
+      <bpmn:incoming>Flow_0hgj3k5</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="RestCall_1l7p02g" name="REST Call">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="integration-service-extension-example-rest-call-worker" retries="1" />
+        <zeebe:ioMapping>
+          <!-- This mapping is for propagation of parameter businessCorrelationKey into the worker from the main starting HTTP API. -->
+          <zeebe:input source="= payload.inputBody.businessCorrelationKey" target="input.businessCorrelationKey" />
+          <!-- This is an example how to propagate the worker's output data into the process payload. -->
+          <zeebe:output source="= output.responseCode" target="payload.restCallResponse.code" />
+          <zeebe:output source="= output.responseHeaders" target="payload.restCallResponse.headers" />
+          <zeebe:output source="= output.responseBody" target="payload.restCallResponse.body" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_09ge9fv</bpmn:incoming>
+      <bpmn:outgoing>Flow_0hgj3k5</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_09ge9fv" sourceRef="StartEvent_1" targetRef="RestCall_1l7p02g" />
+    <bpmn:sequenceFlow id="Flow_0hgj3k5" sourceRef="RestCall_1l7p02g" targetRef="EndEvent_1dyv22q" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="integration-extension-example-rest-call-process">
+      <bpmndi:BPMNEdge id="Flow_0hgj3k5_di" bpmnElement="Flow_0hgj3k5">
+        <di:waypoint x="410" y="127" />
+        <di:waypoint x="502" y="127" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09ge9fv_di" bpmnElement="Flow_09ge9fv">
+        <di:waypoint x="215" y="127" />
+        <di:waypoint x="310" y="127" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="109" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="173" y="152" width="52" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1dyv22q_di" bpmnElement="EndEvent_1dyv22q">
+        <dc:Bounds x="502" y="109" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="494" y="79" width="52" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0gv8esf_di" bpmnElement="RestCall_1l7p02g">
+        <dc:Bounds x="310" y="87" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
+

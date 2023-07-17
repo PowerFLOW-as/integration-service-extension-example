@@ -1,0 +1,42 @@
+version: '2.4'
+
+services:
+
+  zeebe-broker:
+    container_name: zeebe-broker
+    image: docker.powerflow.cloud/misc/zeebe:1.1.10
+    mem_limit: 2000m
+    environment:
+      - ZEEBE_LOG_LEVEL=debug
+      - ZEEBE_NODE_ID=0
+      - ZEEBE_PARTITIONS_COUNT=1
+      - ZEEBE_REPLICATION_FACTOR=0
+      - ZEEBE_CLUSTER_SIZE=0
+      - ZEEBE_CONTACT_POINTS=zeebe-broker:26502
+      - ZEEBE_BROKER_NETWORK_MAXMESSAGESIZE=256KB
+      - ZEEBE_BROKER_DATA_ROCKSDB_COLUMNFAMILYOPTIONS_WRITE_BUFFER_SIZE=32000000
+      - ZEEBE_BROKER_DATA_ROCKSDB_COLUMNFAMILYOPTIONS_MAX_WRITE_BUFFER_SIZE_TO_MAINTAIN=64000000
+    ports:
+      - "26500:26500"
+      - "5701:5701"
+    volumes:
+      # Zeebe broker's persisted data mapping
+      - ${VOLUME_BASE_PATH}/zeebe/broker/data:/usr/local/zeebe/data
+
+  zeebe-monitor:
+    container_name: zeebe-monitor
+    image: docker.powerflow.cloud/misc/zeebe-monitor:2.0.0
+    mem_limit: 1000m
+    environment:
+      - zeebe.client.broker.contactPoint=zeebe-broker:26500
+      - zeebe.client.worker.hazelcast.connection=zeebe-broker:5701
+      - logging.level.root=ERROR
+      - logging.level.io.zeebe=OFF
+      - logging.level.com.hazelcast=OFF
+    volumes:
+      - ${VOLUME_BASE_PATH}/zeebe/monitor/db:/tmp/db
+    ports:
+      - "8082:8082"
+    depends_on:
+      - zeebe-broker
+    # The monitor's URL : http://localhost:8082/zeebe-monitor

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+
+    <!--  Recommended non-JSON LOG pattern that is common through the entire PowerFLOW Java back-end stack -->
+    <property name="PATTERN" value="%d %-5p [%t] [%X{userId}] [requestId=%X{traceId:-}] [%c{1}][%M] - %m%n"/>
+
+    <appender name="systemOut" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.out</target>
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="systemOut"/>
+    </root>
+
+</configuration>
