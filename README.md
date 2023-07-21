@@ -1,4 +1,8 @@
-# springboot integration-service
+# Springboot integration-service-extension-example application
+
+For the description of the development process and other requirements see the DEVELOPMENT_PROCESS.md file.
+
+This README describes the technical description of the application and recommended documentation aspects.
 
 ## Requirements
 
