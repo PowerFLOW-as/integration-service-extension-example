@@ -51,15 +51,10 @@ public class ZeebeVariablesFacade {
         return GSON.fromJson(input, inputType);
     }
 
-    public String getOutputVariables(ActivatedJob activatedJob, Object output) {
-        JsonObject variables = new JsonObject();
-
-        JsonObject payload = getPayload(activatedJob);
+    public String getOutputVariables(Object output) {
+        JsonObject variables = new JsonObject()
         JsonElement outputObject = GSON.toJsonTree(output);
-
-        // This conversion would be used if the variable should be de-serialized
-        // variables.add("headers", getVariableObject(activatedJob, "headers"));
-        variables.add("payload", payload);
+        
         variables.add("output", outputObject);
 
         return GSON.toJson(variables);
@@ -74,7 +69,7 @@ public class ZeebeVariablesFacade {
      */
     public void completeCommandWithOutputVariables(JobClient jobClient, ActivatedJob activatedJob, Object output) {
         jobClient.newCompleteCommand(activatedJob.getKey())
-            .variables(getOutputVariables(activatedJob, output))
+            .variables(getOutputVariables(output))
             .send()
             .join();
     }
